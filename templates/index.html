@@ -1,0 +1,1493 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Phishing Detection System | URL Scanner</title>
+
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- FontAwesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Your CSS -->
+    <link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+
+<body>
+
+<!-- ================= BACKGROUND ================= -->
+
+<div class="bg-animation">
+
+    <span class="circle c1"></span>
+    <span class="circle c2"></span>
+    <span class="circle c3"></span>
+    <span class="circle c4"></span>
+    <span class="circle c5"></span>
+
+</div>
+
+<!-- ================= NAVBAR ================= -->
+
+<nav class="navbar navbar-expand-lg navbar-dark py-3">
+
+<div class="container">
+
+<a class="navbar-brand fw-bold fs-3" href="#">
+
+<i class="fas fa-shield-virus me-2"></i>
+
+Phishing Detector
+
+</a>
+<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+<span class="navbar-toggler-icon"></span>
+
+</button>
+<div class="collapse navbar-collapse" id="menu">
+<ul class="navbar-nav ms-auto">
+<li class="nav-item">
+<a class="nav-link active" href="#">Home</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="#features">Features</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="#process">Process</a>
+</li>
+<li class="nav-item">
+<a class="nav-link" href="#security">Security</a>
+</li>
+</ul>
+</div>
+</div>
+</nav>
+<!-- ================= HERO ================= -->
+
+<section class="hero-section">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<!-- Left Side -->
+
+<div class="col-lg-6">
+
+<div class="hero-text">
+
+<span class="badge bg-primary px-3 py-2 mb-3">
+
+Cyber Security
+
+</span>
+<h1>Protect Yourself From
+<span class="text-gradient"> Phishing Websites </span></h1>
+<p class="lead mt-4"> Analyze suspicious URLs instantly using Machine Learning, Domain Intelligence, HTTPS Verification, and URL Structure Analysis. </p>
+<div class="mt-4"> <a href="#scanner" class="btn btn-lg btn-primary me-3"> <i class="fas fa-search me-2"></i> Start Scanning</a>
+<a href="#features" class="btn btn-lg btn-outline-light"> Learn More </a></div>
+<div class="hero-stats mt-5">
+<div>
+<h3>25+</h3>
+<p>Detection Features</p>
+</div>
+<div>
+<h3>98%</h3>
+<p>Accuracy</p>
+</div>
+<div><h3>&lt;1s</h3>
+<p>Detection</p>
+</div>
+</div>
+</div>
+</div>
+
+<!-- Right Side -->
+
+<div class="col-lg-6 text-center">
+
+<div class="hero-image">
+
+<div class="shield-glow">
+
+<i class="fas fa-shield-alt"></i>
+
+</div>
+
+<div class="floating-card one">
+
+<i class="fas fa-lock"></i>
+
+SSL Check
+
+</div>
+
+<div class="floating-card two">
+
+<i class="fas fa-globe"></i>
+
+Domain Scan
+
+</div>
+
+<div class="floating-card three">
+
+<i class="fas fa-brain"></i>
+
+AI Detection
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ================= URL SCANNER ================= -->
+
+<section id="scanner" class="scanner-section">
+
+<div class="container">
+
+<div class="scanner-card">
+
+<div class="text-center mb-5">
+
+<h2>
+
+<i class="fas fa-search me-2"></i>
+
+Analyze Website
+
+</h2>
+
+<p>
+
+Paste any website URL below to check if it is safe.
+
+</p>
+
+</div>
+
+<!-- Flash -->
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+
+{% if messages %}
+
+{% for category, message in messages %}
+
+<div class="alert alert-{{ 'danger' if category=='error' else category }} alert-dismissible fade show">
+
+{{ message }}
+
+<button class="btn-close"
+
+data-bs-dismiss="alert">
+
+</button>
+
+</div>
+
+{% endfor %}
+
+{% endif %}
+
+{% endwith %}
+
+<form
+
+method="POST"
+
+action="{{ url_for('analyze') }}"
+
+id="analyzeForm">
+
+<div class="row align-items-center g-3">
+
+<div class="col-lg-9">
+
+<div class="input-group input-group-lg">
+
+<span class="input-group-text">
+
+<i class="fas fa-link"></i>
+
+</span>
+
+<input
+
+type="url"
+
+id="url"
+
+name="url"
+
+class="form-control"
+
+placeholder="https://example.com"
+
+required>
+
+</div>
+
+<small class="text-muted">
+
+Enter a complete URL including https://
+
+</small>
+
+</div>
+
+<div class="col-lg-3">
+
+<button
+
+class="btn btn-primary btn-lg w-100"
+
+id="analyzeBtn"
+
+type="submit">
+
+<span class="analyze-text">
+
+<i class="fas fa-search me-2"></i>
+
+Analyze
+
+</span>
+
+<span class="loading-spinner d-none">
+
+<i class="fas fa-spinner fa-spin me-2"></i>
+
+Scanning...
+
+</span>
+
+</button>
+
+</div>
+
+</div>
+
+</form>
+
+<div class="row mt-5">
+
+<div class="col-md-4 text-center">
+
+<i class="fas fa-shield-check fa-2x text-success mb-3"></i>
+
+<h5>Safe Detection</h5>
+<p>Machine learning detects malicious URLs within seconds.</p>
+</div>
+<div class="col-md-4 text-center"> <i class="fas fa-bolt fa-2x text-warning mb-3"></i>
+<h5>Fast Analysis</h5>
+<p>Instant scanning with advanced feature extraction.</p>
+</div>
+<div class="col-md-4 text-center">
+
+<i class="fas fa-server fa-2x text-info mb-3"></i>
+
+<h5>Domain Intelligence</h5>
+
+<p>Checks HTTPS, domain age, IP, registrar and server details.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+
+<!-- ===================================================== -->
+<!-- WHY CHOOSE US -->
+<!-- ===================================================== -->
+
+<section id="features" class="py-5">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-primary px-3 py-2 mb-3">
+WHY CHOOSE US
+</span>
+
+<h2 class="fw-bold">
+Enterprise Grade Security Features
+</h2>
+
+<p class="text-muted">
+Our intelligent phishing detection system combines machine learning,
+domain intelligence and cybersecurity techniques to identify malicious websites.
+</p>
+
+</div>
+
+<div class="row g-4">
+
+<!-- Card -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="feature-card h-100">
+
+<div class="feature-icon bg-primary">
+
+<i class="fas fa-brain"></i>
+
+</div>
+
+<h4>AI Detection</h4>
+
+<p>
+
+Random Forest Machine Learning model trained on
+thousands of phishing and legitimate websites.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- Card -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="feature-card h-100">
+
+<div class="feature-icon bg-success">
+
+<i class="fas fa-lock"></i>
+
+</div>
+
+<h4>HTTPS Verification</h4>
+
+<p>
+
+Checks SSL certificates and secure HTTPS
+connections to identify suspicious websites.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- Card -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="feature-card h-100">
+
+<div class="feature-icon bg-warning">
+
+<i class="fas fa-globe"></i>
+
+</div>
+
+<h4>Domain Intelligence</h4>
+
+<p>
+
+Analyzes domain age, registrar,
+server location and WHOIS information.
+
+</p>
+
+</div>
+
+</div>
+
+<!-- Card -->
+
+<div class="col-lg-3 col-md-6">
+
+<div class="feature-card h-100">
+
+<div class="feature-icon bg-danger">
+
+<i class="fas fa-bolt"></i>
+
+</div>
+
+<h4>Real-Time Analysis</h4>
+
+<p>
+
+Instant URL scanning with feature extraction,
+security checks and prediction.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- DETECTION PROCESS -->
+<!-- ===================================================== -->
+
+<section id="process" class="py-5 process-section">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-info px-3 py-2 mb-3">
+
+How It Works
+
+</span>
+
+<h2 class="fw-bold">
+
+Detection Workflow
+
+</h2>
+
+<p class="text-muted">
+
+Every submitted URL goes through multiple layers of
+security inspection before generating a report.
+
+</p>
+
+</div>
+
+<div class="row text-center">
+
+<div class="col-lg-2 col-md-4 col-6 mb-4">
+
+<div class="process-step">
+
+<div class="step-number">
+
+1
+
+</div>
+
+<i class="fas fa-link fa-2x mb-3 text-primary"></i>
+
+<h6>Enter URL</h6>
+
+<p class="small">
+
+Paste website URL.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-2 col-md-4 col-6 mb-4">
+
+<div class="process-step">
+
+<div class="step-number">
+
+2
+
+</div>
+
+<i class="fas fa-code fa-2x mb-3 text-success"></i>
+
+<h6>Extract Features</h6>
+
+<p class="small">
+
+25+ URL features extracted.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-2 col-md-4 col-6 mb-4">
+
+<div class="process-step">
+
+<div class="step-number">
+
+3
+
+</div>
+
+<i class="fas fa-brain fa-2x mb-3 text-warning"></i>
+
+<h6>Machine Learning</h6>
+
+<p class="small">
+
+Random Forest Prediction.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-2 col-md-4 col-6 mb-4">
+
+<div class="process-step">
+
+<div class="step-number">
+4
+</div>
+<i class="fas fa-network-wired fa-2x mb-3 text-info"></i>
+<h6>Domain Scan</h6>
+<p class="small">WHOIS, SSL & IP Analysis.</p>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6 mb-4"><div class="process-step">
+<div class="step-number">5</div>
+<i class="fas fa-shield-check fa-2x mb-3 text-success"></i>
+<h6>Security Score</h6>
+<p class="small">Risk Level Generated.</p>
+</div>
+</div>
+<div class="col-lg-2 col-md-4 col-6 mb-4">
+<div class="process-step">
+<div class="step-number">6
+</div>
+<i class="fas fa-file-alt fa-2x mb-3 text-danger"></i>
+<h6>Final Report</h6>
+<p class="small">Detailed Analysis.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ===================================================== -->
+<!-- LIVE STATISTICS -->
+<!-- ===================================================== -->
+
+<section class="py-5">
+<div class="container">
+<div class="row g-4">
+<div class="col-lg-3 col-md-6">
+<div class="stat-card"><h2>25+</h2>
+<p>Detection Features</p>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="stat-card">
+<h2>98%</h2>
+<p>Model Accuracy</p>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="stat-card">
+<h2>&lt;1s</h2>
+<p>Average Scan Time</p>
+</div>
+</div>
+<div class="col-lg-3 col-md-6"><div class="stat-card"><h2>24/7</h2>
+<p>Continuous Protection</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- AI TECHNOLOGY -->
+<!-- ===================================================== -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-lg-6">
+
+<img src="https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=900"
+class="img-fluid rounded-4 shadow"
+alt="Cyber Security">
+
+</div>
+
+<div class="col-lg-6">
+
+<span class="badge bg-success px-3 py-2 mb-3">
+
+Machine Learning Engine
+
+</span>
+
+<h2 class="fw-bold">
+
+Powered by Artificial Intelligence
+
+</h2>
+
+<p class="text-muted">
+
+Our phishing detection engine uses a Random Forest
+Machine Learning algorithm trained on thousands of
+phishing and legitimate URLs.
+
+</p>
+
+<div class="mt-4">
+
+<div class="d-flex mb-4">
+
+<div class="me-3">
+
+<i class="fas fa-check-circle fa-2x text-success"></i>
+
+</div>
+
+<div>
+
+<h5>Feature Engineering</h5>
+
+<p>
+
+Extracts over 25 URL-based indicators.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="d-flex mb-4">
+
+<div class="me-3">
+
+<i class="fas fa-check-circle fa-2x text-success"></i>
+
+</div>
+
+<div>
+
+<h5>Risk Prediction</h5>
+
+<p>
+
+Calculates phishing probability using AI.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="d-flex">
+
+<div class="me-3">
+
+<i class="fas fa-check-circle fa-2x text-success"></i>
+
+</div>
+
+<div>
+
+<h5>Domain Intelligence</h5>
+
+<p>
+
+WHOIS, SSL, Registrar and IP lookup.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===================================================== -->
+<!-- SECURITY FEATURES -->
+<!-- ===================================================== -->
+
+<section id="security" class="py-5 security-section">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-danger px-3 py-2 mb-3">
+Cyber Security
+</span>
+
+<h2 class="fw-bold">
+Advanced Security Checks
+</h2>
+
+<p class="text-muted">
+Every URL is inspected through multiple security indicators before generating the final risk score.
+</p>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-lg-4 col-md-6">
+
+<div class="security-card">
+
+<div class="security-icon bg-primary">
+<i class="fas fa-lock"></i>
+</div>
+
+<h5>HTTPS Verification</h5>
+
+<p>
+Detects secure HTTPS connections and SSL encryption.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4 col-md-6">
+
+<div class="security-card">
+
+<div class="security-icon bg-success">
+<i class="fas fa-globe"></i>
+</div>
+
+<h5>Domain Analysis</h5>
+
+<p>
+Checks domain age, registrar, DNS and ownership information.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4 col-md-6">
+
+<div class="security-card">
+
+<div class="security-icon bg-warning">
+<i class="fas fa-network-wired"></i>
+</div>
+
+<h5>IP Detection</h5>
+
+<p>
+Identifies URLs that use IP addresses instead of trusted domains.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4 col-md-6">
+
+<div class="security-card">
+
+<div class="security-icon bg-danger">
+<i class="fas fa-exclamation-triangle"></i>
+</div>
+
+<h5>Suspicious Keywords</h5>
+
+<p>
+Searches for phishing-related words inside the URL.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4 col-md-6">
+
+<div class="security-card">
+
+<div class="security-icon bg-info">
+<i class="fas fa-link"></i>
+</div>
+
+<h5>URL Structure</h5>
+
+<p>
+Analyzes URL length, symbols, digits, subdomains and path complexity.
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4 col-md-6">
+
+<div class="security-card">
+
+<div class="security-icon bg-secondary">
+<i class="fas fa-shield-alt"></i>
+</div>
+
+<h5>Machine Learning</h5>
+
+<p>
+Random Forest model predicts whether a website is phishing or legitimate.
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- CYBER SAFETY TIPS -->
+<!-- ===================================================== -->
+
+<section class="py-5">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-success px-3 py-2 mb-3">
+
+Stay Safe Online
+
+</span>
+
+<h2 class="fw-bold">
+
+Cyber Safety Tips
+
+</h2>
+
+<p class="text-muted">
+
+Simple habits that can protect you from phishing attacks.
+
+</p>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-md-6">
+
+<div class="tip-card">
+
+<div class="d-flex">
+
+<div class="tip-icon me-3">
+
+<i class="fas fa-check-circle text-success fa-2x"></i>
+
+</div>
+
+<div>
+
+<h5>Verify HTTPS</h5>
+
+<p>
+
+Always ensure websites use HTTPS before entering passwords or payment information.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="tip-card">
+
+<div class="d-flex">
+
+<div class="tip-icon me-3">
+
+<i class="fas fa-check-circle text-success fa-2x"></i>
+
+</div>
+
+<div>
+
+<h5>Inspect the Domain</h5>
+
+<p>
+
+Fake websites often contain extra words, numbers or misspellings.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="tip-card">
+
+<div class="d-flex">
+
+<div class="tip-icon me-3">
+
+<i class="fas fa-check-circle text-success fa-2x"></i>
+
+</div>
+
+<div>
+
+<h5>Avoid Unknown Links</h5>
+
+<p>
+
+Never click suspicious links received by email, SMS or social media.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="tip-card">
+
+<div class="d-flex">
+
+<div class="tip-icon me-3">
+
+<i class="fas fa-check-circle text-success fa-2x"></i>
+
+</div>
+
+<div>
+
+<h5>Use Multi-Factor Authentication</h5>
+
+<p>
+
+Enable MFA whenever possible to protect your online accounts.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- FAQ -->
+<!-- ===================================================== -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-primary px-3 py-2 mb-3">
+
+Frequently Asked Questions
+
+</span>
+
+<h2 class="fw-bold">
+
+Need Help?
+
+</h2>
+
+</div>
+
+<div class="accordion accordion-flush" id="faqAccordion">
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+
+How accurate is the phishing detection?
+
+</button>
+
+</h2>
+
+<div id="faq1" class="accordion-collapse collapse show" data-bs-parent="#faqAccordion">
+
+<div class="accordion-body"> Our system uses a Random Forest Machine Learning model trained on thousands of phishing and legitimate URLs, providing high detection accuracy.</div>
+</div>
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+
+Does this tool check SSL certificates?
+
+</button>
+
+</h2>
+
+<div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+
+<div class="accordion-body">
+
+Yes. The system verifies HTTPS usage and incorporates SSL-related indicators into its analysis.
+
+</div>
+
+</div>
+
+</div>
+
+<div class="accordion-item">
+
+<h2 class="accordion-header">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">Can a legitimate website still be risky?</button>
+</h2>
+<div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+<div class="accordion-body">
+Yes. Even legitimate websites can become compromised. Always use caution before entering sensitive information.
+</div>
+</div>
+</div>
+<div class="accordion-item">
+<h2 class="accordion-header">
+<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq4">
+What information is analyzed?
+</button>
+</h2>
+<div id="faq4" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+<div class="accordion-body">
+The system analyzes over 25 URL-based features, including URL structure, HTTPS, IP usage, domain age, registrar information, suspicious keywords and other security indicators.
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===================================================== -->
+<!-- RETRAIN MODEL -->
+<!-- ===================================================== -->
+
+<section class="py-5">
+
+<div class="container">
+
+<div class="row justify-content-center">
+
+<div class="col-lg-8">
+
+<div class="card border-0 shadow-lg rounded-4">
+
+<div class="card-body p-5 text-center">
+
+<i class="fas fa-sync-alt fa-4x text-primary mb-4"></i>
+
+<h2 class="fw-bold mb-3">
+
+Retrain Machine Learning Model
+
+</h2>
+
+<p class="text-muted mb-4">
+
+Keep your phishing detection engine updated with the latest training dataset.
+Retraining improves prediction accuracy and helps detect newly emerging phishing attacks.
+
+</p>
+
+<form method="POST"
+action="{{ url_for('retrain') }}">
+
+<button
+type="submit"
+class="btn btn-primary btn-lg px-5">
+
+<i class="fas fa-rotate me-2"></i>
+
+Retrain Model
+
+</button>
+
+</form>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- FOOTER -->
+<!-- ===================================================== -->
+
+<footer class="footer-section text-white">
+
+<div class="container">
+
+<div class="row gy-5">
+
+<!-- About -->
+
+<div class="col-lg-4">
+
+<h3 class="fw-bold mb-4">
+
+<i class="fas fa-shield-virus me-2"></i>
+
+Phishing Detector
+
+</h3>
+
+<p>
+
+AI-powered phishing detection platform designed to protect users
+from malicious websites using Machine Learning, URL analysis,
+domain intelligence and modern cybersecurity techniques.
+
+</p>
+
+<div class="mt-4">
+
+<a href="#" class="social-icon">
+
+<i class="fab fa-github"></i>
+
+</a>
+
+<a href="#" class="social-icon">
+
+<i class="fab fa-linkedin"></i>
+
+</a>
+
+<a href="#" class="social-icon">
+
+<i class="fab fa-twitter"></i>
+
+</a>
+
+<a href="#" class="social-icon">
+
+<i class="fab fa-discord"></i>
+
+</a>
+
+</div>
+
+</div>
+
+<!-- Quick Links -->
+
+<div class="col-lg-2">
+
+<h5 class="fw-bold mb-4">
+
+Quick Links
+
+</h5>
+
+<ul class="list-unstyled footer-links">
+
+<li><a href="#">Home</a></li>
+
+<li><a href="#scanner">Scanner</a></li>
+
+<li><a href="#features">Features</a></li>
+
+<li><a href="#process">Process</a></li>
+
+<li><a href="#security">Security</a></li>
+
+</ul>
+
+</div>
+
+<!-- Features -->
+
+<div class="col-lg-3">
+
+<h5 class="fw-bold mb-4">
+
+Detection Features
+
+</h5>
+
+<ul class="list-unstyled footer-links">
+
+<li>Machine Learning</li>
+
+<li>HTTPS Verification</li>
+
+<li>Domain Intelligence</li>
+
+<li>URL Analysis</li>
+
+<li>IP Detection</li>
+
+<li>WHOIS Lookup</li>
+
+</ul>
+
+</div>
+
+<!-- Contact -->
+
+<div class="col-lg-3">
+
+<h5 class="fw-bold mb-4">
+
+Security Tips
+
+</h5>
+
+<div class="mb-3">
+
+<i class="fas fa-check-circle text-success me-2"></i>
+
+Always verify HTTPS
+
+</div>
+
+<div class="mb-3">
+
+<i class="fas fa-check-circle text-success me-2"></i>
+
+Never trust unknown links
+
+</div>
+
+<div class="mb-3">
+
+<i class="fas fa-check-circle text-success me-2"></i>
+
+Enable Multi-Factor Authentication
+
+</div>
+
+<div class="mb-3">
+
+<i class="fas fa-check-circle text-success me-2"></i>
+
+Check domain spelling carefully
+
+</div>
+
+</div>
+
+</div>
+
+<hr class="border-light opacity-25 my-5">
+
+<div class="row align-items-center">
+
+<div class="col-md-6">
+
+<p class="mb-0">
+
+© 2026 Phishing Detection System.
+
+All Rights Reserved.
+
+</p>
+
+</div>
+
+<div class="col-md-6 text-md-end">
+
+<p class="mb-0">
+
+Designed with
+
+<i class="fas fa-heart text-danger"></i>
+
+for Cyber Security
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</footer>
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+// Loading Button
+
+document.getElementById('analyzeForm').addEventListener('submit', function(){
+
+const btn=document.getElementById('analyzeBtn');
+
+btn.disabled=true;
+
+btn.querySelector('.analyze-text').classList.add('d-none');
+
+btn.querySelector('.loading-spinner').classList.remove('d-none');
+
+});
+
+// Auto Add Protocol
+
+document.getElementById("url").addEventListener("blur",function(){
+
+let url=this.value.trim();
+
+if(url && !/^https?:\/\//i.test(url))
+
+{
+
+this.value="https://"+url;
+
+}
+
+});
+
+// Smooth Scroll
+
+document.querySelectorAll('a[href^="#"]').forEach(anchor=>{
+
+anchor.addEventListener('click',function(e){
+
+e.preventDefault();
+
+const target=document.querySelector(this.getAttribute('href'));
+
+if(target){
+
+target.scrollIntoView({
+
+behavior:'smooth'
+
+});
+
+}
+
+});
+
+});
+
+// Counter Animation
+
+const counters=document.querySelectorAll('.stat-card h2');
+
+const observer=new IntersectionObserver(entries=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+const counter=entry.target;
+
+const target=counter.innerText;
+
+counter.style.opacity=1;
+
+counter.style.transform='translateY(0)';
+
+}
+
+});
+
+});
+
+counters.forEach(counter=>{
+
+counter.style.opacity=0;
+
+counter.style.transform='translateY(30px)';
+
+counter.style.transition='.8s';
+
+observer.observe(counter);
+
+});
+
+// Navbar Shadow
+
+window.addEventListener('scroll',()=>{
+
+const nav=document.querySelector('.navbar');
+
+if(window.scrollY>50)
+
+nav.classList.add('shadow');
+else
+nav.classList.remove('shadow');});
+</script>
+</body>
+</html>

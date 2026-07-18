@@ -1,0 +1,1261 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Analysis Result | Phishing Detection System</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet">
+
+<link href="{{ url_for('static', filename='style.css') }}" rel="stylesheet">
+</head>
+<body>
+
+<!-- ========================================= -->
+<!-- Background Animation -->
+<!-- ========================================= -->
+
+<div class="bg-animation">
+<div class="circle c1"></div>
+<div class="circle c2"></div>
+<div class="circle c3"></div>
+<div class="circle c4"></div>
+<div class="circle c5"></div>
+</div>
+
+<!-- ========================================= -->
+<!-- Navigation -->
+<!-- ========================================= -->
+
+<nav class="navbar navbar-expand-lg fixed-top">
+
+<div class="container">
+<a class="navbar-brand" href="{{ url_for('index') }}">
+<i class="fas fa-shield-virus me-2"></i>Phishing Detector</a>
+<div class="ms-auto">
+<a href="{{ url_for('index') }}" class="btn btn-outline-light">
+<i class="fas fa-arrow-left me-2"></i>Analyze Another URL</a>
+</div>
+</div>
+</nav>
+
+<!-- ========================================= -->
+<!-- Hero -->
+<!-- ========================================= -->
+
+<section class="hero-section pt-5">
+
+<div class="container">
+<div class="row align-items-center">
+<div class="col-lg-8">
+<span class="badge bg-primary px-3 py-2 mb-3"> Machine Learning Result </span>
+<h1 class="fw-bold">Website Analysis Complete </h1>
+<p class="text-muted"> Our AI engine has analyzed your URL using multiple phishing indicators, domain intelligence and machine learning.</p>
+</div>
+<div class="col-lg-4 text-center">
+<div class="shield-glow">{% if result.risk_color == "danger" %}<i class="fas fa-triangle-exclamation"></i>
+{% elif result.risk_color == "warning" %}
+<i class="fas fa-circle-exclamation"></i>{% else %}
+<i class="fas fa-shield-check"></i>{% endif %}
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ========================================= -->
+<!-- RESULT CARD -->
+<!-- ========================================= -->
+
+<section class="scanner-section">
+<div class="container">
+<div class="scanner-card">
+<div class="row align-items-center">
+
+<!-- LEFT -->
+
+<div class="col-lg-8">
+<h2 class="mb-3">{{ result.risk_level }}</h2>
+
+<p class="mb-4">{{ result.message }}</p>
+
+<div class="mb-4">
+<label class="fw-bold">Analyzed URL</label>
+<div class="form-control mt-2">
+<code>
+{{ result.url }}
+</code>
+</div>
+</div>
+<div class="row">
+
+<div class="col-md-6 mb-4">
+
+<label class="fw-bold mb-2">
+
+Phishing Probability
+
+</label>
+
+<div class="progress" style="height:28px;">
+
+<div class="progress-bar bg-danger"
+
+style="width:{{ result.phishing_probability }}%;">
+
+{{ result.phishing_probability }}%
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6 mb-4">
+
+<label class="fw-bold mb-2">
+
+Legitimate Probability
+
+</label>
+
+<div class="progress" style="height:28px;">
+
+<div class="progress-bar bg-success"
+
+style="width:{{ result.legitimate_probability }}%;">
+
+{{ result.legitimate_probability }}%
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- RIGHT -->
+
+<div class="col-lg-4">
+
+<div class="stat-card">
+
+<h6 class="text-muted">
+
+Overall Risk Score
+
+</h6>
+
+<div class="position-relative my-4">
+
+<div style="width:180px;height:180px;border-radius:50%;margin:auto;
+
+background:conic-gradient(
+
+{% if result.risk_color=='danger' %}
+
+#ef4444
+
+{% elif result.risk_color=='warning' %}
+
+#f59e0b
+
+{% else %}
+
+#22c55e
+
+{% endif %}
+
+{{ result.phishing_probability * 3.6 }}deg,
+
+#e5e7eb 0deg);">
+
+<div style="
+
+width:130px;
+
+height:130px;
+
+background:white;
+
+border-radius:50%;
+
+position:relative;
+
+top:25px;
+
+left:25px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
+flex-direction:column;">
+
+<h2>
+
+{{ result.phishing_probability }}%
+
+</h2>
+
+<small>
+
+Risk
+
+</small>
+
+</div>
+
+</div>
+
+</div>
+
+{% if result.risk_color=="danger" %}
+
+<span class="badge bg-danger w-100 py-3">
+
+HIGH RISK
+
+</span>
+
+{% elif result.risk_color=="warning" %}
+
+<span class="badge bg-warning text-dark w-100 py-3">
+
+MEDIUM RISK
+
+</span>
+
+{% else %}
+
+<span class="badge bg-success w-100 py-3">
+
+SAFE WEBSITE
+
+</span>
+
+{% endif %}
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ========================================= -->
+<!-- QUICK OVERVIEW -->
+<!-- ========================================= -->
+
+<section class="py-5">
+
+<div class="container">
+<div class="row g-4">
+<div class="col-lg-3 col-md-6">
+<div class="feature-card">
+<i class="fas fa-lock fa-3x text-success mb-3"></i>
+<h5>HTTPS</h5>
+<h3>
+{% if result.features[14] %}Enabled{% else %}Disabled{% endif %}</h3>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="feature-card">
+<i class="fas fa-server fa-3x text-primary mb-3"></i>
+<h5>Registrar</h5>
+<p class="small">{{ result.deep_info.registrar }}</p>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="feature-card">
+<i class="fas fa-calendar fa-3x text-warning mb-3"></i>
+<h5>Domain Age</h5>
+<h3>{% if result.deep_info.domain_age_days %}{{ result.deep_info.domain_age_days }}{% else %}Unknown{% endif %}</h3>
+<p>Days</p>
+</div>
+</div>
+<div class="col-lg-3 col-md-6">
+<div class="feature-card">
+<i class="fas fa-location-dot fa-3x text-info mb-3"></i>
+<h5>Server Location</h5>
+<p>{{ result.deep_info.server_location }}</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===================================================== -->
+<!-- DOMAIN INTELLIGENCE -->
+<!-- ===================================================== -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-primary px-3 py-2 mb-3">
+
+Domain Intelligence
+
+</span>
+
+<h2 class="fw-bold">
+
+Website Information
+
+</h2>
+
+<p class="text-muted">
+
+Additional information collected during the analysis process.
+
+</p>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-lg-3 col-md-6">
+
+<div class="security-card">
+
+<i class="fas fa-calendar-days fa-3x text-primary mb-4"></i>
+
+<h5>Domain Age</h5>
+
+{% if result.deep_info.domain_age_days %}
+
+<h3>
+
+{{ result.deep_info.domain_age_days }}
+
+</h3>
+
+<p>Days</p>
+
+{% if result.deep_info.is_suspicious_age %}
+
+<span class="badge bg-danger">
+
+New Domain
+
+</span>
+
+{% endif %}
+
+{% else %}
+
+<h4>Unknown</h4>
+
+{% endif %}
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<div class="security-card">
+
+<i class="fas fa-building fa-3x text-success mb-4"></i>
+
+<h5>Registrar</h5>
+
+<p>
+
+{{ result.deep_info.registrar }}
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<div class="security-card">
+
+<i class="fas fa-location-dot fa-3x text-danger mb-4"></i>
+
+<h5>Location</h5>
+
+<p>
+
+{{ result.deep_info.server_location }}
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-3 col-md-6">
+
+<div class="security-card">
+
+<i class="fas fa-network-wired fa-3x text-warning mb-4"></i>
+
+<h5>Server IP</h5>
+
+<p>
+
+{{ result.deep_info.server_ip }}
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- FEATURE ANALYSIS -->
+<!-- ===================================================== -->
+
+<section class="py-5">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-success px-3 py-2 mb-3">
+
+Feature Analysis
+
+</span>
+
+<h2>
+
+URL Security Indicators
+
+</h2>
+
+</div>
+
+<div class="row">
+
+<div class="col-lg-6">
+
+<div class="card shadow-soft border-0 rounded-4">
+
+<div class="card-body p-4">
+
+<h4 class="mb-4">
+
+URL Structure
+
+</h4>
+
+<table class="table">
+
+<tbody>
+
+<tr>
+
+<td>URL Length</td>
+
+<td>
+
+<span class="badge bg-info">
+
+{{ result.features[0] }}
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Dots</td>
+
+<td>
+
+<span class="badge bg-secondary">
+
+{{ result.features[1] }}
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Hyphens</td>
+
+<td>
+
+<span class="badge bg-secondary">
+
+{{ result.features[2] }}
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Subdomains</td>
+
+<td>
+
+<span class="badge bg-secondary">
+
+{{ result.features[12] }}
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Path Length</td>
+
+<td>
+
+<span class="badge bg-secondary">
+
+{{ result.features[15] }}
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Digits</td>
+
+<td>
+
+<span class="badge bg-secondary">
+
+{{ result.features[18] }}
+
+</span>
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Special Characters</td>
+
+<td>
+
+<span class="badge bg-secondary">
+
+{{ result.features[24] }}
+
+</span>
+
+</td>
+
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-lg-6">
+
+<div class="card shadow-soft border-0 rounded-4">
+
+<div class="card-body p-4">
+
+<h4 class="mb-4">
+
+Security Checks
+
+</h4>
+
+<table class="table">
+
+<tbody>
+
+<tr>
+
+<td>HTTPS</td>
+
+<td>
+
+{% if result.features[14] %}
+
+<span class="badge bg-success">
+
+Enabled
+
+</span>
+
+{% else %}
+
+<span class="badge bg-danger">
+
+Disabled
+
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>IP Address Used</td>
+
+<td>
+
+{% if result.features[13] %}
+
+<span class="badge bg-danger">
+
+Yes
+
+</span>
+
+{% else %}
+
+<span class="badge bg-success">
+
+No
+
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>URL Shortener</td>
+
+<td>
+
+{% if result.features[23] %}
+
+<span class="badge bg-warning">
+
+Detected
+
+</span>
+
+{% else %}
+
+<span class="badge bg-success">
+
+No
+
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Suspicious Keywords</td>
+
+<td>
+
+{% if result.features[20] %}
+
+<span class="badge bg-warning">
+
+Found
+
+</span>
+
+{% else %}
+
+<span class="badge bg-success">
+
+None
+
+</span>
+
+{% endif %}
+
+</td>
+
+</tr>
+
+<tr>
+
+<td>Numbers in Domain</td>
+
+<td>
+
+{% if result.features[21] %}
+
+<span class="badge bg-warning">
+
+Yes
+
+</span>
+
+{% else %}
+<span class="badge bg-success">
+No
+</span>
+{% endif %}
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===================================================== -->
+<!-- AI DECISION -->
+<!-- ===================================================== -->
+
+<section class="py-5 bg-light">
+<div class="container">
+<div class="row">
+<div class="col-lg-6">
+<div class="feature-card h-100">
+<i class="fas fa-brain fa-4x text-primary mb-4"></i>
+
+<h3>AI Decision</h3>
+
+<p>{{ result.message }}</p>
+
+<p>The prediction is based on multiple URL characteristics, domain information, HTTPS usage, keyword detection, IP analysis and machine learning classification.</p>
+</div>
+</div>
+
+<div class="col-lg-6">
+
+<div class="feature-card h-100">
+
+<i class="fas fa-shield-halved fa-4x text-success mb-4"></i>
+
+<h3>
+
+Recommendation
+
+</h3>
+{% if result.risk_color=="danger" %}
+<div class="alert alert-danger">
+<strong>Do NOT visit this website.</strong>
+<br>
+Avoid entering passwords, banking information or personal details.
+</div>
+
+{% elif result.risk_color=="warning" %}
+<div class="alert alert-warning">
+Proceed carefully.
+
+Verify the domain before logging in.
+</div>
+
+{% else %}
+<div class="alert alert-success">
+The website appears safe based on our analysis.
+
+Continue using normal security precautions.
+</div>
+{% endif %}
+</div>
+</div>
+</div>
+</div>
+</section>
+
+<!-- ===================================================== -->
+<!-- THREAT SUMMARY -->
+<!-- ===================================================== -->
+
+<section class="py-5">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-danger px-3 py-2 mb-3">
+
+Security Summary
+
+</span>
+
+<h2 class="fw-bold">
+
+Threat Assessment
+
+</h2>
+
+<p class="text-muted">
+
+Final AI-generated security assessment based on all analyzed features.
+
+</p>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-lg-4">
+
+<div class="security-card">
+
+<i class="fas fa-shield-virus fa-4x text-danger mb-4"></i>
+
+<h4>Threat Level</h4>
+
+<h2 class="mt-3">
+
+{{ result.risk_level }}
+
+</h2>
+
+<p>
+
+{{ result.message }}
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="security-card">
+
+<i class="fas fa-chart-line fa-4x text-success mb-4"></i>
+
+<h4>Model Prediction</h4>
+
+<h2>
+
+{{ result.prediction }}
+
+</h2>
+
+<p>
+
+Confidence based on machine learning probability scores.
+
+</p>
+
+</div>
+
+</div>
+
+<div class="col-lg-4">
+
+<div class="security-card">
+
+<i class="fas fa-microchip fa-4x text-primary mb-4"></i>
+
+<h4>Analysis Engine</h4>
+
+<h2>
+
+Random Forest
+
+</h2>
+
+<p>
+
+25+ URL features analyzed using AI and domain intelligence.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- CYBER SAFETY TIPS -->
+<!-- ===================================================== -->
+
+<section class="py-5 bg-light">
+
+<div class="container">
+
+<div class="text-center mb-5">
+
+<span class="badge bg-success px-3 py-2 mb-3">
+
+Stay Safe
+
+</span>
+
+<h2 class="fw-bold">
+
+Cyber Security Tips
+
+</h2>
+
+</div>
+
+<div class="row g-4">
+
+<div class="col-md-6">
+
+<div class="tip-card">
+
+<div class="d-flex">
+
+<div class="tip-icon me-3">
+
+<i class="fas fa-lock text-success"></i>
+
+</div>
+
+<div>
+
+<h5>Verify HTTPS</h5>
+
+<p>
+
+Always ensure the website uses HTTPS before entering passwords or payment information.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="tip-card">
+
+<div class="d-flex">
+
+<div class="tip-icon me-3">
+
+<i class="fas fa-globe text-primary"></i>
+
+</div>
+
+<div>
+
+<h5>Check Domain Name</h5>
+
+<p>
+
+Verify spelling carefully. Phishing websites often imitate trusted domains.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="tip-card">
+
+<div class="d-flex">
+
+<div class="tip-icon me-3">
+
+<i class="fas fa-envelope text-warning"></i>
+
+</div>
+
+<div>
+
+<h5>Don't Trust Unknown Links</h5>
+
+<p>
+
+Avoid clicking suspicious links received through email or social media.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="col-md-6">
+
+<div class="tip-card">
+
+<div class="d-flex">
+
+<div class="tip-icon me-3">
+
+<i class="fas fa-user-shield text-info"></i>
+
+</div>
+
+<div>
+
+<h5>Enable Multi-Factor Authentication</h5>
+
+<p>
+
+Protect important accounts using MFA whenever possible.
+
+</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- ACTION BUTTONS -->
+<!-- ===================================================== -->
+
+<section class="py-5">
+
+<div class="container">
+
+<div class="text-center">
+
+<a href="{{ url_for('index') }}"
+
+class="btn btn-primary btn-lg px-5 me-3 mb-3">
+
+<i class="fas fa-search me-2"></i>
+
+Analyze Another URL
+
+</a>
+
+<button onclick="window.print()"
+
+class="btn btn-outline-secondary btn-lg px-5 mb-3">
+
+<i class="fas fa-print me-2"></i>
+
+Print Report
+
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<!-- ===================================================== -->
+<!-- FOOTER -->
+<!-- ===================================================== -->
+
+<footer class="footer-section">
+
+<div class="container">
+
+<div class="row">
+
+<div class="col-lg-6">
+
+<h3>
+
+<i class="fas fa-shield-virus me-2"></i>
+
+Phishing Detection System
+
+</h3>
+
+<p>
+
+Machine Learning powered phishing detection platform that analyzes websites using URL structure, domain intelligence, HTTPS verification and AI prediction.
+
+</p>
+
+</div>
+
+<div class="col-lg-6 text-lg-end">
+
+<h5 class="mb-3">
+
+Quick Links
+
+</h5>
+
+<a href="{{ url_for('index') }}" class="text-light me-3">
+
+Home
+
+</a>
+
+<a href="#" class="text-light me-3">
+
+Security
+
+</a>
+
+<a href="#" class="text-light">
+
+Privacy
+
+</a>
+
+<div class="mt-4">
+
+<a href="#" class="social-icon">
+
+<i class="fab fa-github"></i>
+
+</a>
+
+<a href="#" class="social-icon">
+
+<i class="fab fa-linkedin"></i>
+
+</a>
+
+<a href="#" class="social-icon">
+
+<i class="fab fa-twitter"></i>
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<hr class="border-light opacity-25 my-4">
+
+<div class="text-center">
+
+<p class="mb-0">
+
+© 2026 Phishing Detection System | Designed for Cyber Security
+
+</p>
+
+</div>
+
+</div>
+
+</footer>
+
+<!-- ===================================================== -->
+<!-- JAVASCRIPT -->
+<!-- ===================================================== -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+<script>
+
+// Animate Progress Bars
+
+window.addEventListener("load",()=>{
+
+document.querySelectorAll(".progress-bar").forEach(bar=>{
+
+let width=bar.style.width;
+
+bar.style.width="0%";
+
+setTimeout(()=>{
+
+bar.style.transition="1.2s ease";
+
+bar.style.width=width;
+
+},300);
+
+});
+
+});
+
+// Fade Cards
+
+const cards=document.querySelectorAll(".feature-card,.security-card,.tip-card,.stat-card");
+
+const observer=new IntersectionObserver(entries=>{
+
+entries.forEach(entry=>{
+
+if(entry.isIntersecting){
+
+entry.target.classList.add("slide-up");
+
+}
+
+});
+
+});
+
+cards.forEach(card=>observer.observe(card));
+
+</script>
+
+</body>
+
+</html>
